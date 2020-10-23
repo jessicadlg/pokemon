@@ -1,61 +1,85 @@
 <?php
+include_once "header.php";
+include_once "funciones.php";
 
-require_once("conexion.php");
-include_once("header.php");
-require_once ("procesar.php");
+$base= new funciones("Recursos/config.ini");
+if(!$base->conectarBD()){
+    echo"<h1 class='text-center'>Error</h1>";
+    exit();
+}
+
+$datos=$base->leer();
+if(!$base->leer()){
+    echo"<h1 class='text-center'>No hay pokemones</h1>";
+    exit();
+}
+
 ?>
 </header>
-<div class="text-center mt-3 p-5">
+<div class="text-center m-2 p-5">
     <form action="index.php" method="post" class="d-flex flex-row justify-content-center">
-        <input style="width: 60%"  name="codigo" type="search" placeholder="Ingrese el numero de Pokémon..." aria-label="Search">
-        <button class="btn btn-outline-info" name="btn" type="submit">Quien es ese pokémon?</button>
+        <div class="input-group mb-3">
+            <input type="text"  name="ingreso" class="form-control" placeholder="ingrese el nombre, numero o tipo de pokemon" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button name="buscar" class="btn btn-info" type="submit">Quien es ese pokémon?</button>
+            </div>
+        </div>
     </form>
 </div>
-
 <?php
-echo"
-<div class='container'>
- <div class='table-responsive'>
-
-                  <table class='table' >
-                      <thead>
-                      <tr>
-                        <th class='text-center'>Imagen</th>
-                        <th class='text-center'>Nombre</th>
-                        <th class='text-center'>Numero</th>
-                        <th class='text-center'>Tipo</th>
-                        <th class='text-center'>Acciones</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      </div>
-                      ";
-
-if(isset($_POST['btn']) && $_POST['codigo']!=""){
-    $buscar = $_POST['codigo'];
-    $sql = "SELECT * FROM listado  WHERE numero = '".$buscar."' OR nombre = '".$buscar."' OR
- tipo = '".$buscar."' ";
-}else
-    $sql = "SELECT * FROM listado";
-
-$result = $conexion->query($sql) or die(mysqli_error($conexion));
-
-if($result ->num_rows ==0){
-    $sql = "SELECT * FROM listado";
-    $result = $conexion->query($sql) or die(mysqli_error($conexion));
-    echo "<h2 class='text-center mt-3 p-5'>Pokemon no encontrado</h2>";
-
+if(isset($_POST['buscar'])){
+    $info=$_POST['ingreso'];
+    $buscar=$base->buscarEnBD($info);
+    if(!$buscar)
+        echo"<h1 class='text-center'>No se encuentra el pokemon solicitado</h1>";
+    else $datos=$buscar;
 }
-while ($fila = $result->fetch_assoc()) {?>
-    <tr>
-        <td  class='text-center'><img src='Recursos/imagenes/<?= $fila['imagen']?>.png' width='50'></td>
-        <td  class='text-center'><?= $fila['nombre']?></td>
-        <td  class='text-center'><?= $fila['numero']?></td>
-        <td  class='text-center'><img src='Recursos/imagenes/<?= $fila['tipo']?>.png' width='50' ></td>
-        <td  class='text-center'><a href=modificar.php?editar=<?=$fila['identificador']?>' class='btn btn-success text-black'>Modificar</a>
-        <a href='index.php?borrar=<?=$fila['identificador']?>' class='btn btn-danger text-black'>Eliminar</a></td>
-    </tr>
-<?php }?>
-<t/body>
-</table>
-</div>
+?>
+<div class='container'>
+    <div class='table-responsive'>
+
+        <table class='table' >
+            <thead>
+            <tr>
+                <th class='text-center'>Imagen</th>
+                <th class='text-center'>Nombre</th>
+                <th class='text-center'>Numero</th>
+                <th class='text-center'>Tipo</th>
+                <?php
+                if($login) echo " <th class='text-center'>Acciones</th>";
+                ?>
+
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            foreach($datos as $dato){
+            ?>
+            }
+            <tr>
+                <td class='text-center aling-middle'><img src="<?php echo $dato['imagen']?>" width='50'></td>
+                <td class='text-center aling-middle'><?php echo $dato['nombre']?></td>
+                <td class='text-center aling-middle'><?php echo $dato['id']?></td>
+                <td  class='text-center aling-middle'><img src='imagenes/<?php echo $dato['tipo']?>.png'  width='50' ></td>
+                <?php
+                 if($login)
+                echo "
+                <td  class='text-center aling-middle'>
+                     <div class='d-flex justify-conter-center'>
+                       <a href='modificar.php' class='btn btn-success text-black '>Modificar</a>
+                       <a href='index.php' class='btn btn-danger text-black ml-1'>Eliminar</a>
+                    </div>
+                </td>";
+               ?>
+            </tr>
+            <?php
+            }
+            ?>
+            </tbody>
+        </table>
+    </div>
+    <div class="container mx-auto">
+        <?php
+        if($login) echo"<a href='nuevoPokemon.php' class='btn btn-info btn-block mt-3'>Nuevo Pokemon</a>";
+        ?>
+    </div>

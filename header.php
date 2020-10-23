@@ -1,3 +1,6 @@
+<?php
+$login=false;
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,14 +15,28 @@
 <body>
 <header>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;"">
-        <img src="Recursos/imagenes/pokebola.png" alt="logo" style="width: 50px">
+        <img src="recursos/imagenes/Pokebola.png" alt="logo" style="width: 50px">
+         <h1 class="text-center mr-sm-2">Pokedex</h1>
+
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-        <div class="container p-3 m-14">
-            <h1 class="text-center mr-sm-2">Pokedex</h1>
-        </div>
+    <div class="collapse navbar-collapse " id="navbarTogglerDemo01">
+        <?php
+        if(!$login)
+        echo'
+         <form action="" method="post" class="ml-auto form-inline my-2 my-lg-0">
+                    <input class="form-control m-1  "  type="text" name="mail" placeholder="Email" aria-label="Search">
+                    <input class="form-control m-1" type="password" name="pass" placeholder="Password" aria-label="Search">
+                    <button class="btn btn-outline-info m-1"  type="submit">Ingresar</button>
+         </form>
+        ';
+        else echo "<div class='ml-auto'>Cerrar sesión</div>";
+        ?>
+    </div>
+    </nav>
+
+</header>
 
 
 
